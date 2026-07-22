@@ -14,8 +14,6 @@
 - [Project Structure](#project-structure)
 - [Setup Instructions](#setup-instructions)
 - [Minimum SDK](#minimum-sdk)
-- [AI-Assisted Code](#ai-assisted-code)
-- [Project Deliverables](#project-deliverables)
 
 ---
 
@@ -152,14 +150,3 @@ MediTriage/
 - **targetSdk**: 36
 - **compileSdk**: 36
 
-## AI-Assisted Code
-
-Sections annotated with `// AI-assisted` in source files indicate areas where AI tooling helped with boilerplate patterns (e.g., ViewBinding inflation/destruction pattern, ViewModel `by viewModels()` delegation, Retrofit service/response scaffolding). All architecture decisions, Fragment navigation logic, Oracle schema design, and business logic are original work by the team.
-
-## Project Deliverables
-
-- 📄 [Final Report](../../releases/latest)
-- 📊 [Presentation Slides](../../releases/latest)
-- 🎥 [Demo Video](../../releases/latest)
-
-*(Uploaded as assets on the [Releases](../../releases) page rather than committed directly, since they're large binary files.)*
