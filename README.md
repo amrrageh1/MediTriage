@@ -119,8 +119,8 @@ MediTriage/
 
 - Android Studio Hedgehog or newer
 - Android SDK API 26+
-- A running instance of the Node.js Oracle backend (see backend repo, if published separately)
-
+- A running instance of the Node.js Oracle backend
+  
 ### Configuration
 
 1. **Clone the repository**
