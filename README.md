@@ -125,7 +125,7 @@ MediTriage/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/MediTriage.git
+   git clone https://github.com/amrrageh1/MediTriage.git
    ```
 
 2. **Set your Gemini API key** — open `AnalyzingViewModel.kt` and replace the placeholder:
