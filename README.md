@@ -95,13 +95,3 @@ HomeFragment
 
 Sections annotated with `// AI-assisted` in source files indicate areas where AI tooling helped with boilerplate patterns (e.g., ViewBinding inflation/destruction pattern, ViewModel `by viewModels()` delegation). All architecture decisions, Room schema design, Fragment navigation logic, and business logic are original work by the team.
 
-## Team Contribution Log
-
-*(To be filled in the written report)*
-
-| Member | Role | Tasks |
-|---|---|---|
-| — | Project Lead | Architecture design, integration |
-| — | UI/UX & XML Layouts | All layout XML files, drawable resources |
-| — | ViewModel & Business Logic | ViewModels, Repository, Gemini integration |
-| — | Network & Session | ApiService, ApiClient, TriageSession |
