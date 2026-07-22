@@ -8,7 +8,6 @@
 
 - [Overview](#overview)
 - [Features](#features)
-- [Screenshots](#screenshots)
 - [Architecture](#architecture)
 - [Fragment Navigation Map](#fragment-navigation-map)
 - [Tech Stack](#tech-stack)
@@ -35,24 +34,6 @@ MediTriage is an AI-powered medical triage app built for Android using Kotlin. I
 - 🕓 **Triage history** — view past triage sessions (`HistoryFragment`)
 - 👤 **Profile & logout** (`ProfileFragment`)
 
-## Screenshots
-
-<p align="center">
-  <img src="screenshots/screenshot-01.png" width="180"/>
-  <img src="screenshots/screenshot-02.png" width="180"/>
-  <img src="screenshots/screenshot-03.png" width="180"/>
-  <img src="screenshots/screenshot-04.png" width="180"/>
-  <img src="screenshots/screenshot-05.png" width="180"/>
-</p>
-<p align="center">
-  <img src="screenshots/screenshot-06.png" width="180"/>
-  <img src="screenshots/screenshot-07.png" width="180"/>
-  <img src="screenshots/screenshot-08.png" width="180"/>
-  <img src="screenshots/screenshot-09.png" width="180"/>
-  <img src="screenshots/screenshot-10.png" width="180"/>
-</p>
-
-> Pulled from the project report — rename the files in `screenshots/` to match each actual screen (e.g. `login.png`, `home.png`, `triage.png`) if you'd like clearer labels.
 
 ## Architecture
 
