@@ -1,0 +1,22 @@
+# Local configuration and credentials
+local.properties
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+keystore.properties
+google-services.json
+# Generated output and IDE state
+.gradle/
+.kotlin/
+.idea/
+**/build/
+*.iml
+.externalNativeBuild/
+.cxx/
+.DS_Store
+__MACOSX/
+._*
+*.apk
+*.aab

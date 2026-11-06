@@ -1,152 +1,52 @@
-# MediTriage 🩺
+# MediTriage
 
-**An AI-powered Android triage app that guides patients through a symptom questionnaire, analyzes responses with Google's Gemini API, and connects them to the right specialist.**
+Educational Android symptom-triage prototype built with Kotlin, XML views, ViewModel/LiveData, Retrofit, and a direct Gemini HTTP integration. The app includes registration/login, symptom entry, AI result display, doctor lookup, and visit history flows.
 
----
+**Status:** Android source is now browsable. This is an incomplete prototype; a successful build and end-to-end operation have not been verified. Use synthetic data only, not real patient data or clinical decisions.
 
-## Table of Contents
+## Repository layout
 
-- [Overview](#overview)
-- [Features](#features)
-- [Architecture](#architecture)
-- [Fragment Navigation Map](#fragment-navigation-map)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Setup Instructions](#setup-instructions)
-- [Minimum SDK](#minimum-sdk)
+- `app/src/main/java/com/example/meditriage/` — application code and API contract
+- `app/src/main/res/` — layouts, navigation, themes, icons
+- `app/src/test/` and `app/src/androidTest/` — original example tests
+- `app/src/debug/res/xml/` — debug-only emulator HTTP allowance
+- `gradle/` — dependency versions and wrapper configuration
+- `docs/sample_schema.sql` — partial historical Oracle schema example
+- `docs/database.md` — missing database components and secure setup guidance
+- `SECURITY.md` — credential rotation and deployment limitations
 
----
+## Build prerequisites and known blockers
 
-## Overview
+The original archive specifies Android Gradle Plugin 9.1.1, Gradle 9.3.1, compile/target SDK 35, and minimum SDK 26. These settings are preserved, not certified as a working combination. Install a compatible Android Studio, Android SDK, and JDK. Dependency compatibility must be checked during the first full build.
 
-MediTriage is an AI-powered medical triage app built for Android using Kotlin. It guides patients through a structured symptom questionnaire, analyzes responses with the **Google Gemini API**, and provides a severity assessment, probable condition, medical advice, and a recommended specialist — all matched against a live Oracle database of real doctors.
+**The original archive is missing `gradle/wrapper/gradle-wrapper.jar`.** The wrapper scripts cannot launch until it is restored from a trusted Gradle 9.3.1 installation. For example, generate a wrapper in an empty temporary project with `gradle wrapper --gradle-version 9.3.1`, then copy its wrapper JAR here; verify its provenance before committing. Keep the checked-in distribution checksum.
 
-## Features
+Open this root directory in Android Studio and configure the local SDK. Do not commit `local.properties`. After restoring the wrapper, run:
 
-- 🔐 **User authentication** — register and log in (`RegisterFragment`, `LoginFragment`)
-- 📋 **Structured symptom questionnaire** — guided triage flow (`TriageFragment`)
-- 🤖 **AI-powered analysis** — symptoms sent to the Gemini API for assessment (`AnalyzingFragment` / `AnalyzingViewModel`)
-- 📊 **Triage results** — severity level, probable condition, medical advice, and recommended specialist (`ResultFragment`)
-- 👨‍⚕️ **Doctor matching** — recommended specialists pulled from a live Oracle database (`DoctorProfileFragment`)
-- 📅 **Visit confirmation** — book/confirm a visit with the matched doctor (`ConfirmVisitFragment`)
-- 🕓 **Triage history** — view past triage sessions (`HistoryFragment`)
-- 👤 **Profile & logout** (`ProfileFragment`)
-
-
-## Architecture
-
-The app follows strict **MVVM (Model–View–ViewModel)** architecture:
-
-```
-View (Fragments)
-    │  observes LiveData / sealed states
-    ▼
-ViewModel (AuthViewModel, HomeViewModel, HistoryViewModel,
-           AnalyzingViewModel, ConfirmVisitViewModel, DoctorProfileViewModel)
-    │  calls
-    ▼
-Repository (MediTriageRepository)
-    │  calls via Retrofit + Coroutines on Dispatchers.IO
-    ▼
-Remote Data Source (Oracle REST API via ApiService)
+```sh
+./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
 ```
 
-- Fragments **never** call the API directly — all network calls go through a ViewModel → Repository.
-- ViewModels survive configuration changes (screen rotation) — no data is lost.
-- All database/network operations run on `Dispatchers.IO` via Kotlin Coroutines.
-- Fragments observe LiveData with `viewLifecycleOwner` to prevent memory leaks.
-- ViewBinding is used throughout — no `findViewById()` calls anywhere.
-- All string literals are defined in `res/values/strings.xml`.
+The included tests are starter examples, not evidence of application correctness.
 
-## Fragment Navigation Map
+## Backend configuration
 
-```
-SplashFragment
-  ├── → RegisterFragment → HomeFragment
-  └── → LoginFragment   → HomeFragment
+Debug builds default to `http://10.0.2.2:3000/`, the Android emulator's host address. Override the non-secret URL at build time:
 
-HomeFragment
-  ├── → TriageFragment → AnalyzingFragment → ResultFragment
-  │                                          ├── → DoctorProfileFragment
-  │                                          └── → ConfirmVisitFragment → HistoryFragment
-  ├── → HistoryFragment
-  └── → ProfileFragment → SplashFragment (logout)
+```sh
+./gradlew :app:assembleDebug -PMEDITRIAGE_API_BASE_URL=https://your-backend.example/
 ```
 
-## Tech Stack
+The URL must end in `/`. Release builds require HTTPS through their network policy; set an HTTPS backend URL when building a release. Debug cleartext is allowed only for `10.0.2.2`, `localhost`, and `127.0.0.1`. Physical devices require a reachable HTTPS backend or an explicitly reviewed debug-only local configuration.
 
-| Layer | Technology |
-|---|---|
-| Language | Kotlin (no Java) |
-| Architecture | MVVM + Repository |
-| UI | XML layouts, ViewBinding |
-| Navigation | Android Navigation Component |
-| Networking | Retrofit 2 + Gson |
-| Async | Kotlin Coroutines |
-| AI | Google Gemini API (via OkHttp) |
-| Remote DB | Oracle (via Node.js REST backend) |
+The Node.js server and its package manifest are **not included**. Implement or restore the routes and payloads in `ApiService.kt` (patients/login, sessions, symptoms, diagnoses, history, audit, and doctor lookup). Oracle schema examples are incomplete and do not fully match those payloads. See [database setup](docs/database.md).
 
-## Project Structure
+## AI integration
 
-```
-MediTriage/
-├── app/
-│   ├── src/main/java/com/example/meditriage/
-│   │   ├── MainActivity.kt
-│   │   ├── SplashFragment.kt
-│   │   ├── LoginFragment.kt / RegisterFragment.kt / AuthViewModel.kt
-│   │   ├── HomeFragment.kt / HomeViewModel.kt
-│   │   ├── TriageFragment.kt / TriageSession.kt
-│   │   ├── AnalyzingFragment.kt / AnalyzingViewModel.kt / TriageAiResult.kt
-│   │   ├── ResultFragment.kt
-│   │   ├── DoctorProfileFragment.kt / DoctorProfileViewModel.kt
-│   │   ├── ConfirmVisitFragment.kt / ConfirmVisitViewModel.kt
-│   │   ├── HistoryFragment.kt / HistoryViewModel.kt
-│   │   ├── ProfileFragment.kt
-│   │   ├── MediTriageRepository.kt
-│   │   ├── ApiClient.kt / ApiService.kt
-│   ├── src/test/          # unit tests
-│   └── src/androidTest/   # instrumented tests
-├── gradle/
-├── meditriage_database.sql   # Oracle DB schema
-├── queries_database.txt      # sample queries
-└── README.md
-```
+`AnalyzingViewModel.kt` contains a placeholder Gemini key. No working key is supplied; AI requests will not succeed as shipped. Move model calls to an authenticated backend and validate supported models there. Never replace the placeholder with a production key in this public Android project.
 
-## Setup Instructions
+## Migration and security
 
-### Prerequisites
+Source was recovered from the original `MediTriage.zip`; local caches, machine paths, and macOS metadata were excluded. Original Kotlin source, resources, and example tests were preserved except for API URL configuration. The obsolete ZIP is removed only after the uploaded source is verified.
 
-- Android Studio Hedgehog or newer
-- Android SDK API 26+
-- A running instance of the Node.js Oracle backend
-  
-### Configuration
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/amrrageh1/MediTriage.git
-   ```
-
-2. **Set your Gemini API key** — open `AnalyzingViewModel.kt` and replace the placeholder:
-   ```kotlin
-   private val apiKey = "YOUR_GEMINI_API_KEY_HERE"
-   ```
-   > ⚠️ Never commit a real API key. Keep the placeholder in version control and load your real key locally (e.g. from `local.properties` or an environment variable) instead.
-
-3. **Set your backend URL** — open `ApiClient.kt` and update:
-   ```kotlin
-   private const val BASE_URL = "http://<YOUR_PC_IP>:3000/"
-   ```
-   Your PC's local IP (e.g. `192.168.1.x`) must be reachable from the emulator/device.
-
-4. **Sync Gradle** — Android Studio will prompt you. Click *Sync Now*.
-
-5. **Run on emulator or device** — minimum API 26 (Android 8.0 Oreo).
-
-## Minimum SDK
-
-- **minSdk**: 26 (Android 8.0)
-- **targetSdk**: 36
-- **compileSdk**: 36
-
+The old SQL administration scripts contained a database password, broad grants, and a destructive statement. Those were replaced with documentation, while partial table definitions were preserved under `docs/`. **Rotate the exposed database password if it was ever active.** Deleting current files does not erase Git history. See [security notes](SECURITY.md).
