@@ -24,6 +24,7 @@ The original archive specifies Android Gradle Plugin 9.1.1, Gradle 9.3.1, compil
 Open this root directory in Android Studio and configure the local SDK. Do not commit `local.properties`. After restoring the wrapper, run:
 
 ```sh
+chmod +x gradlew  # Browser uploads do not preserve executable permissions
 ./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
 ```
 
@@ -47,6 +48,6 @@ The Node.js server and its package manifest are **not included**. Implement or r
 
 ## Migration and security
 
-Source was recovered from the original `MediTriage.zip`; local caches, machine paths, and macOS metadata were excluded. Original Kotlin source, resources, and example tests were preserved except for API URL configuration. The obsolete ZIP is removed only after the uploaded source is verified.
+Source was recovered from the original `MediTriage.zip`; local caches, machine paths, and macOS metadata were excluded. Original Kotlin source, resources, and example tests were preserved except for API URL configuration. All 90 cleaned files were verified on GitHub before the obsolete ZIP was removed from the current branch.
 
 The old SQL administration scripts contained a database password, broad grants, and a destructive statement. Those were replaced with documentation, while partial table definitions were preserved under `docs/`. **Rotate the exposed database password if it was ever active.** Deleting current files does not erase Git history. See [security notes](SECURITY.md).
